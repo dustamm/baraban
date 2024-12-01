@@ -1,0 +1,23 @@
+.arrow-right {
+    position: absolute;
+    left: 30px;
+    top: 250px;
+    transform: translateY(-50%);
+    width: 0; 
+    height: 0; 
+    border-top: 35px solid transparent;
+    border-bottom: 35px solid transparent;
+    border-left: 20px solid rgb(255, 0, 0); /* Color of the arrow */
+}
+
+.student-item {
+    padding: 10px 15px;
+    text-align: center;
+    border: 1px solid black;
+    width: fit-content;
+}
+
+.students-container {
+    display: flex;
+    flex-wrap: wrap;
+}

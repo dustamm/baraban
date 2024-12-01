@@ -6,9 +6,9 @@ let students = JSON.parse(localStorage.getItem('students')) || [];
 function setupWheel(items, canvasId) {
     // If items array is empty, create a default segment
     const segments = items.length > 0
-        ? items.map(item => ({
+        ? items.map((item, ind) => ({
             fillStyle: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
-            text: item
+            text: `${ind}`
         }))
         : [{ fillStyle: '#ccc', text: 'No Items' }];
 
@@ -30,7 +30,6 @@ function setupWheel(items, canvasId) {
 
 // Initialize wheels
 let questionWheel = setupWheel(questions, 'questionWheel');
-let studentWheel = setupWheel(students, 'studentWheel');
 
 // Display selected segment in an alert
 function alertSelection(selectedSegment) {
@@ -47,21 +46,19 @@ function saveToLocalStorage() {
 function renderList(listId, items) {
     const list = $(listId);
     list.empty();
-    items.forEach(item => list.append(`<li class="list-group-item">${item}</li>`));
+    items.forEach((item, ind) => list.append(`<li class="list-group-item">${ind + 1}. ${item}</li>`));
 }
+
 
 // Initial rendering of question and student lists
 renderList('#questionList', questions);
-renderList('#studentList', students);
+renderList('#studentList', students)
 
 // Functions to reinitialize wheels after updating questions or students
 function updateQuestionWheel() {
     questionWheel = setupWheel(questions, 'questionWheel');
 }
 
-function updateStudentWheel() {
-    studentWheel = setupWheel(students, 'studentWheel');
-}
 
 // Add new question
 $('#addQuestion').click(() => {
@@ -75,17 +72,28 @@ $('#addQuestion').click(() => {
     }
 });
 
-// Add new student
 $('#addStudent').click(() => {
     const student = $('#newStudent').val();
     if (student) {
         students.push(student);
-        updateStudentWheel();
         renderList('#studentList', students);
         $('#newStudent').val('');
         saveToLocalStorage();
+        renderList2(students)
     }
 });
+
+// Add new student
+// $('#addStudent').click(() => {
+//     const student = $('#newStudent').val();
+//     if (student) {
+//         students.push(student);
+//         updateStudentWheel();
+//         renderList('#studentList', students);
+//         $('#newStudent').val('');
+//         saveToLocalStorage();
+//     }
+// });
 
 // Reset the animation settings for consistent spin speed
 function resetAndStartAnimation(wheel) {
@@ -109,8 +117,15 @@ function resetAndStartAnimation(wheel) {
 $('#startQuestionSpin').click(() => resetAndStartAnimation(questionWheel));
 $('#stopQuestionSpin').click(() => questionWheel.stopAnimation(false));
 
-// Event listeners for student wheel
-$('#startStudentSpin').click(() => resetAndStartAnimation(studentWheel));
-$('#stopStudentSpin').click(() => studentWheel.stopAnimation(false));
 
 
+
+// 
+
+function renderList2( items) {
+    const list = $('.students-container');
+    list.empty();
+    items.forEach((item, ind) => list.append(`<li class="list-group-item">${ind + 1}</li>`));
+}
+
+renderList2(students)
