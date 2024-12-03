@@ -43,21 +43,48 @@ function saveToLocalStorage() {
 }
 
 // Render the question and student lists
-function renderList(listId, items) {
+function renderList(listId, items, haveScore = false) {
     const list = $(listId);
     list.empty();
-    items.forEach((item, ind) => list.append(`<li class="list-group-item">${ind + 1}. ${item}</li>`));
+    items.forEach((item, ind) => list.append(`<li class="list-group-item item-right">
+        <div class="question-num">
+            <span>${ind + 1}</span>
+         <span> ${item}</span>
+        </div>
+       ${haveScore ? ' <div class="score btn btn-primary" data-isInput="false" >30</div>': ''}
+        </li>`));
+
+    if (haveScore) {
+        $('.score').click((e) => {
+            const isInput = e.target.attributes[1].value
+            let value = e.target.textContent
+
+            if (isInput) {
+                e.target.innerHTML = `<input type="text" data-isInput="true" value="${value}" id="score-input"/>`
+
+                
+            }
+        })
+    }
 }
 
+function updateScore() {
+    let score = 0
+    return function(score) {
+        this.score = score
+        console.log(score)
+    }
+}
 
 // Initial rendering of question and student lists
-renderList('#questionList', questions);
-renderList('#studentList', students)
+renderList('#questionList', questions, false);
+renderList('#studentList', students, true)
 
 // Functions to reinitialize wheels after updating questions or students
 function updateQuestionWheel() {
     questionWheel = setupWheel(questions, 'questionWheel');
 }
+
 
 
 // Add new question
@@ -83,17 +110,6 @@ $('#addStudent').click(() => {
     }
 });
 
-// Add new student
-// $('#addStudent').click(() => {
-//     const student = $('#newStudent').val();
-//     if (student) {
-//         students.push(student);
-//         updateStudentWheel();
-//         renderList('#studentList', students);
-//         $('#newStudent').val('');
-//         saveToLocalStorage();
-//     }
-// });
 
 // Reset the animation settings for consistent spin speed
 function resetAndStartAnimation(wheel) {
@@ -117,15 +133,56 @@ function resetAndStartAnimation(wheel) {
 $('#startQuestionSpin').click(() => resetAndStartAnimation(questionWheel));
 $('#stopQuestionSpin').click(() => questionWheel.stopAnimation(false));
 
+$('#startStudentsSpin').click(() => startRandomiser())
 
 
 
 // 
+let  usedNums = []
+function startRandomiser() {
+    const studentList = document.querySelectorAll('.student-item')
+    studentList.forEach((item, ind) => {
+        if (usedNums.includes(ind)) {
+            item.classList.add('nonActive')
+        }
+    })
+ 
+    let randomNum = Math.floor(Math.random() * studentList.length) 
+    if (usedNums.length === studentList.length) {
+       usedNums = []
+       studentList.forEach(item => item.classList.remove('nonActive'))
+    }
+    while (usedNums.includes(randomNum)) {
+        randomNum = Math.floor(Math.random() * studentList.length) 
+    }
+    if (!usedNums.includes(randomNum)){
+        usedNums.push(randomNum)
+    }
+    let count = 0
+    let loop = 0
+    
+    const interval = setInterval(() => {
+        if (count === studentList.length) {
+            count = 0
+        }
+        if (count === studentList.length - 1) {
+            loop++
+        }
+        if (loop === 3 && count === randomNum ) {
+            clearInterval(interval)
+        }
+        studentList.forEach(item => item.classList.remove('active-student'))
+        studentList[count].classList.add('active-student')
+        count++
+    }, 50)
+
+}
 
 function renderList2( items) {
     const list = $('.students-container');
     list.empty();
-    items.forEach((item, ind) => list.append(`<li class="list-group-item">${ind + 1}</li>`));
+    items.forEach((item, ind) => list.append(`<li class="list-group-item student-item">${ind + 1}</li>`));
 }
 
 renderList2(students)
+

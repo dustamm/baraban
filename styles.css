@@ -21,3 +21,44 @@
     display: flex;
     flex-wrap: wrap;
 }
+
+.item-right {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 0;
+    align-items: center;
+    overflow: hidden;
+    box-sizing: content-box;
+}
+
+.score {
+    padding: 10px;
+}
+
+.question-num {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.item-right span:nth-child(1) {
+    background: #e83636;
+    color: white;
+    border-radius: 3px;
+    padding: 15px;
+}
+
+
+.active-student {
+    z-index: 2;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.nonActive {
+    color: #d7a2a2;
+    background: #f0e3fd21;
+    border: #f0e3fd21;
+    box-shadow: inset 2px 0px 5px 0px #0000008f;
+}
